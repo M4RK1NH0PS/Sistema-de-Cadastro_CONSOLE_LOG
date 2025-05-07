@@ -1,0 +1,144 @@
+# Função para salvar dados no arquivo
+def salvar_em_arquivo(nome_arquivo, dados):
+    with open(nome_arquivo, "a", encoding="utf-8") as f:
+        f.write(dados + "\n")
+
+# Função para buscar por nome em um arquivo
+def buscar_por_nome(nome_arquivo, tipo):
+    nome_busca = input(f"Digite o nome do {tipo} que deseja buscar: ").strip().lower()
+    encontrado = False
+    try:
+        with open(nome_arquivo, "r", encoding="utf-8") as f:
+            for linha in f:
+                campos = linha.strip().split("|")
+                if nome_busca == campos[0].strip().lower():
+                    print(f"\n{tipo.capitalize()} encontrado:")
+                    if tipo == "aluno":
+                        print(f"Nome: {campos[0]}")
+                        print(f"Idade: {campos[1]}")
+                        print(f"CPF: {campos[2]}")
+                        print(f"Telefone: {campos[3]}")
+                        print(f"Responsável: {campos[4]}")
+                        print(f"Endereço: {campos[5]}")
+                        print(f"Série: {campos[6]}")
+                        print(f"Email: {campos[7]}\n")
+                    elif tipo == "professor":
+                        print(f"Nome: {campos[0]}")
+                        print(f"Idade: {campos[1]}")
+                        print(f"CPF: {campos[2]}")
+                        print(f"Telefone: {campos[3]}")
+                        print(f"Endereço: {campos[4]}")
+                        print(f"Email: {campos[5]}\n")
+                    elif tipo == "disciplina":
+                        print(f"Nome da Disciplina: {campos[0]}")
+                        print(f"Descrição: {campos[1]}")
+                        print(f"Professor Responsável: {campos[2]}\n")
+                    encontrado = True
+                    break
+        if not encontrado:
+            print(f"{tipo.capitalize()} não encontrado.\n")
+    except FileNotFoundError:
+        print(f"Arquivo de {tipo}s ainda não existe.\n")
+
+# Cadastro de aluno
+def cadastrar_aluno():
+    print("Cadastro de Aluno")
+    nome = input("Nome: ")
+    idade = input("Idade: ")
+    cpf = input("CPF: ")
+    telefone = input("Telefone: ")
+    responsavel = input("Nome do responsável: ")
+    endereco = input("Endereço: ")
+    serie = input("Série escolar: ")
+    email = input("Email: ")
+    senha = input("Senha: ")
+
+    dados = f"{nome}|{idade}|{cpf}|{telefone}|{responsavel}|{endereco}|{serie}|{email}"
+    salvar_em_arquivo("alunos.txt", dados)
+
+    print("\nAluno cadastrado com sucesso!\n")
+
+# Cadastro de professor
+def cadastrar_professor():
+    print("Cadastro de Professor")
+    nome = input("Nome: ")
+    idade = int(input("Idade (deve ser maior que 18): "))
+    if idade < 18:
+        print("Erro: O professor deve ter mais de 18 anos.\n")
+        return
+    cpf = input("CPF: ")
+    telefone = input("Telefone: ")
+    endereco = input("Endereço: ")
+    email = input("Email: ")
+    senha = input("Senha: ")
+
+    dados = f"{nome}|{idade}|{cpf}|{telefone}|{endereco}|{email}"
+    salvar_em_arquivo("professores.txt", dados)
+
+    print("\nProfessor cadastrado com sucesso!\n")
+
+# Cadastro de disciplinas
+def cadastrar_disciplinas():
+    print("Cadastro de Disciplina")
+    nome = input("Nome da disciplina: ")
+    descricao = input("Descrição da disciplina: ")
+    professor = input("Nome do professor responsável: ")
+
+    dados = f"{nome}|{descricao}|{professor}"
+    salvar_em_arquivo("disciplinas.txt", dados)
+
+    print("\nDisciplina cadastrada com sucesso!\n")
+
+# Cálculo das médias
+def calcular_media():
+    print("Cálculo da Média do Aluno")
+    try:
+        nota1 = float(input("Digite a primeira nota: "))
+        nota2 = float(input("Digite a segunda nota: "))
+        media = (nota1 + nota2) / 2
+        print("Média:", media)
+        if media >= 7:
+            print("Aluno aprovado!\n")
+        elif media <= 6:
+            print("Aluno reprovado.\n")
+        else:
+            print("Aluno em recuperação.\n")
+    except ValueError:
+        print("Erro: Digite notas válidas.\n")
+
+# Menu principal
+def menu():
+    while True:
+        print("=== Sistema Escolar ===")
+        print("1. Cadastrar Aluno")
+        print("2. Cadastrar Professor")
+        print("3. Cadastrar Disciplina")
+        print("4. Calcular Média do Aluno")
+        print("5. Buscar Aluno por Nome")
+        print("6. Buscar Professor por Nome")
+        print("7. Buscar Disciplina por Nome")
+        print("8. Sair")
+        escolha = input("Escolha uma opção: ")
+
+        if escolha == '1':
+            cadastrar_aluno()
+        elif escolha == '2':
+            cadastrar_professor()
+        elif escolha == '3':
+            cadastrar_disciplinas()
+        elif escolha == '4':
+            calcular_media()
+        elif escolha == '5':
+            buscar_por_nome("alunos.txt", "aluno")
+        elif escolha == '6':
+            buscar_por_nome("professores.txt", "professor")
+        elif escolha == '7':
+            buscar_por_nome("disciplinas.txt", "disciplina")
+        elif escolha == '8':
+            print("Saindo do sistema...")
+            break
+        else:
+            print("Opção inválida. Tente novamente.\n")
+
+# Executar o menu
+menu()
