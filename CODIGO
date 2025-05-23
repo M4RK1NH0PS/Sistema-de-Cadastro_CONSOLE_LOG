@@ -1,9 +1,28 @@
-# Função para salvar dados no arquivo
+import re
+
+#salvar dados
 def salvar_em_arquivo(nome_arquivo, dados):
     with open(nome_arquivo, "a", encoding="utf-8") as f:
         f.write(dados + "\n")
 
-# Função para buscar por nome em um arquivo
+#Validador de senha
+def validar_senha(senha):
+    if (not re.search(r"[A-Z]", senha) or
+        not re.search(r"[0-9]", senha) or
+        not re.search(r"[!@#$%^&*(),.?\":{}|<>]", senha)):
+        print("Erro: A senha deve conter pelo menos uma letra maiúscula, um número e um caractere especial.\n")
+        return False
+    return True
+
+#Validador de idade
+def validar_idade(tipo, idade):
+    if idade >= 18:
+        return True
+    else:
+        print(f"{tipo.capitalize()} O Aluno precisa ser maior de 18 anos para inscrever-se na plataforma.\n")
+        return False
+
+#Função para buscar por nome
 def buscar_por_nome(nome_arquivo, tipo):
     nome_busca = input(f"Digite o nome do {tipo} que deseja buscar: ").strip().lower()
     encontrado = False
@@ -20,7 +39,7 @@ def buscar_por_nome(nome_arquivo, tipo):
                         print(f"Telefone: {campos[3]}")
                         print(f"Responsável: {campos[4]}")
                         print(f"Endereço: {campos[5]}")
-                        print(f"Série: {campos[6]}")
+                        print(f"Periodo: {campos[6]}")
                         print(f"Email: {campos[7]}\n")
                     elif tipo == "professor":
                         print(f"Nome: {campos[0]}")
@@ -40,44 +59,55 @@ def buscar_por_nome(nome_arquivo, tipo):
     except FileNotFoundError:
         print(f"Arquivo de {tipo}s ainda não existe.\n")
 
-# Cadastro de aluno
+#Cadastro de aluno
 def cadastrar_aluno():
     print("Cadastro de Aluno")
     nome = input("Nome: ")
-    idade = input("Idade: ")
+    idade = int(input("Idade: "))
+    if not validar_idade("aluno", idade):
+        return
+
     cpf = input("CPF: ")
     telefone = input("Telefone: ")
     responsavel = input("Nome do responsável: ")
     endereco = input("Endereço: ")
-    serie = input("Série escolar: ")
+    periodo = input("Periodo: ")
     email = input("Email: ")
-    senha = input("Senha: ")
 
-    dados = f"{nome}|{idade}|{cpf}|{telefone}|{responsavel}|{endereco}|{serie}|{email}"
+    while True:
+        senha = input("Senha: ")
+        if validar_senha(senha):
+            break
+
+    dados = f"{nome}|{idade}|{cpf}|{telefone}|{responsavel}|{endereco}|{periodo}|{email}"
     salvar_em_arquivo("alunos.txt", dados)
 
     print("\nAluno cadastrado com sucesso!\n")
 
-# Cadastro de professor
+#Cadastro do professor
 def cadastrar_professor():
     print("Cadastro de Professor")
     nome = input("Nome: ")
-    idade = int(input("Idade (deve ser maior que 18): "))
-    if idade < 18:
-        print("Erro: O professor deve ter mais de 18 anos.\n")
+    idade = int(input("Idade: "))
+    if not validar_idade("professor", idade):
         return
+
     cpf = input("CPF: ")
     telefone = input("Telefone: ")
     endereco = input("Endereço: ")
     email = input("Email: ")
-    senha = input("Senha: ")
+
+    while True:
+        senha = input("Senha: ")
+        if validar_senha(senha):
+            break
 
     dados = f"{nome}|{idade}|{cpf}|{telefone}|{endereco}|{email}"
     salvar_em_arquivo("professores.txt", dados)
 
     print("\nProfessor cadastrado com sucesso!\n")
 
-# Cadastro de disciplinas
+#Cadastro das disciplinas
 def cadastrar_disciplinas():
     print("Cadastro de Disciplina")
     nome = input("Nome da disciplina: ")
@@ -89,7 +119,7 @@ def cadastrar_disciplinas():
 
     print("\nDisciplina cadastrada com sucesso!\n")
 
-# Cálculo das médias
+#Cálculo das médias
 def calcular_media():
     print("Cálculo da Média do Aluno")
     try:
@@ -99,14 +129,14 @@ def calcular_media():
         print("Média:", media)
         if media >= 7:
             print("Aluno aprovado!\n")
-        elif media <= 6:
-            print("Aluno reprovado.\n")
-        else:
+        elif media >= 5:
             print("Aluno em recuperação.\n")
+        else:
+            print("Aluno reprovado.\n")
     except ValueError:
         print("Erro: Digite notas válidas.\n")
 
-# Menu principal
+#Menu
 def menu():
     while True:
         print("=== Sistema Escolar ===")
@@ -139,6 +169,5 @@ def menu():
             break
         else:
             print("Opção inválida. Tente novamente.\n")
-
-# Executar o menu
+            
 menu()
